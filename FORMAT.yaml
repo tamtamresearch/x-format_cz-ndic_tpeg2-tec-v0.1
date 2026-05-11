@@ -1,0 +1,23 @@
+# This YAML file defines attributes of format described in this directory
+name: "TPEG2 TEC - CZ NDIC Events"
+format_version: '0.1'
+description: |
+    CZ NDIC TPEG2 Traffic Event Compact (TEC) publication
+schema:
+    uri: cz-ndic_tpeg2-tec-v0.1
+    type: TISA TPEG-ML (XML)
+    location: schema/tpeg-tec-entrypoint.xsd
+model:
+    standard: ISO 21219-15:2020
+    application: TPEG2 TEC 3.4
+    framework: TPEG2 SFW 1.1
+    location_methods:
+        - TMC (TLR 2.0)
+        - Geographic (GLR 2.1)
+        - OpenLR (OLR 1.1)
+samples:
+    location: samples
+maintainer:
+    name: Jan Vlčinský, Petr Bureš, Roman Hořeňovský
+    company: TamTam Research s.r.o.
+    url: http://www.tamtamresearch.com

@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tsf:TPEGDocument xmlns:tsf="http://www.tisa.org/TPEG/SFW_1_1" xmlns:tdt="http://www.tisa.org/TPEG/TPEGDataTypes_2_1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tec="http://www.tisa.org/TPEG/TEC_3_4" xmlns:mmc="http://www.tisa.org/TPEG/MMC_1_1" xmlns:lrc="http://www.tisa.org/TPEG/LRC_3_0" xmlns:glr="http://www.tisa.org/TPEG/GLR_2_1" xmlns:olr="http://www.tisa.org/TPEG/OLR_1_1" xmlns:etl="http://www.tisa.org/TPEG/ETL_1_0" xmlns:tlr="http://www.tisa.org/TPEG/TLR_2_0" xmlns:dlr="http://www.tisa.org/TPEG/DLR_4_0" xmlns:ulr="http://www.tisa.org/TPEG/ULR_0_8" xmlns:sni="http://www.tisa.org/TPEG/SNI_3_3" xmlns:tfp="http://www.tisa.org/TPEG/TFP_1_1" xmlns:wea="http://www.tisa.org/TPEG/WEA_1_2" tsf:timeStamp="2026-02-03T23:59:53+01:00" tsf:version="3" tsf:docType="fullRepository">
+  <tsf:TransportFrame>
+    <tsf:ServiceData>
+      <tsf:SID>
+        <tdt:SID_A>0</tdt:SID_A>
+        <tdt:SID_B>100</tdt:SID_B>
+        <tdt:SID_C>100</tdt:SID_C>
+      </tsf:SID>
+      <tsf:ServiceComponentMultiplex>
+        <tsf:ServiceComponent tsf:applicationId="0" tsf:contentId="0">
+          <tsf:ServiceComponentFrameContent xsi:type="tsf:ServCompFrameProtected">
+            <tsf:SCID>0</tsf:SCID>
+            <tsf:ApplicationRootMessage>
+              <tsf:ApplicationRootMessageML xsi:type="sni:SNI1Template">
+                <sni:optionCurrentServiceInformation>
+                  <sni:serviceName>TPEG_CZ_Events</sni:serviceName>
+                  <sni:serviceDescription>Dopravní události pro celou ČR</sni:serviceDescription>
+                </sni:optionCurrentServiceInformation>
+              </tsf:ApplicationRootMessageML>
+            </tsf:ApplicationRootMessage>
+            <tsf:ApplicationRootMessage>
+              <tsf:ApplicationRootMessageML xsi:type="sni:SNI1Template">
+                <sni:optionGST1_FastTuningTable>
+                  <sni:tableVersion>1</sni:tableVersion>
+                  <sni:characterEncoding sni:table="sni002_CharacterEncoding" sni:code="125"/>
+                  <sni:tableEntry>
+                    <sni:SCID>1</sni:SCID>
+                    <sni:contentID>1</sni:contentID>
+                    <sni:applicationID>5</sni:applicationID>
+                    <sni:safetyFlagIsSet>false</sni:safetyFlagIsSet>
+                  </sni:tableEntry>
+                </sni:optionGST1_FastTuningTable>
+              </tsf:ApplicationRootMessageML>
+            </tsf:ApplicationRootMessage>
+          </tsf:ServiceComponentFrameContent>
+        </tsf:ServiceComponent>
+        <tsf:ServiceComponent tsf:applicationId="5" tsf:contentId="1">
+          <tsf:ServiceComponentFrameContent xsi:type="tsf:ServCompFramePrioritisedCountedProtected">
+            <tsf:SCID>1</tsf:SCID>
+            <tsf:Priority tdt:table="typ007_Priority" tdt:code="0"/>
+            <tsf:MessageCount>1</tsf:MessageCount>
+            <tsf:ApplicationRootMessage>
+              <tsf:ApplicationRootMessageML xsi:type="tec:TECMessage">
+                <tec:mmt>
+                  <tec:optionMessageManagement>
+                    <!-- DATEX II: situation=39871672-606f-4570-928e-170b87b7beab -->
+                    <mmc:messageID>2307232279</mmc:messageID>
+                    <mmc:versionID>7</mmc:versionID>
+                    <mmc:messageExpiryTime>2026-03-31T23:59:00+02:00</mmc:messageExpiryTime>
+                    <mmc:cancelFlag>false</mmc:cancelFlag>
+                    <mmc:messageGenerationTime>2026-02-03T23:59:53+01:00</mmc:messageGenerationTime>
+                  </tec:optionMessageManagement>
+                </tec:mmt>
+                <tec:event>
+                  <tec:effectCode tec:table="tec001_EffectCode" tec:code="7"/>
+                  <tec:startTime>2025-09-22T00:00:00+02:00</tec:startTime>
+                  <tec:stopTime>2026-03-31T23:59:00+02:00</tec:stopTime>
+                  <tec:cause>
+                    <tec:optionDirectCause>
+                      <tec:mainCause tec:table="tec002_CauseCode" tec:code="16"/>
+                      <tec:warningLevel tec:table="tec003_WarningLevel" tec:code="3"/>
+                      <tec:unverifiedInformation>false</tec:unverifiedInformation>
+                      <tec:subCause tec:table="tec116_RegulatoryMeasure" tec:code="6"/>
+                      <tec:freeText>
+                        <tdt:languageCode tdt:table="typ001_LanguageCode" tdt:code="28"/>
+                        <tdt:value>silnice III/4793 (ulice 28. října), Moravská Ostrava a Přívoz, Ostrava, uzavřeno, stavební práce, Od 22.09.2025 00:00 Do 31.03.2026 23:59, sil. III/4793 ul. 28. října - jízdní pás ve směru „centrum“ v úseku od křižovatky se sil. III/4793 ul. Vítkovická po</tdt:value>
+                      </tec:freeText>
+                    </tec:optionDirectCause>
+                  </tec:cause>
+                  <tec:cause>
+                    <tec:optionDirectCause>
+                      <tec:mainCause tec:table="tec002_CauseCode" tec:code="3"/>
+                      <tec:warningLevel tec:table="tec003_WarningLevel" tec:code="3"/>
+                      <tec:unverifiedInformation>false</tec:unverifiedInformation>
+                      <tec:subCause tec:table="tec103_Roadworks" tec:code="1"/>
+                      <tec:freeText>
+                        <tdt:languageCode tdt:table="typ001_LanguageCode" tdt:code="28"/>
+                        <tdt:value>silnice III/4793 (ulice 28. října), Moravská Ostrava a Přívoz, Ostrava, uzavřeno, stavební práce, Od 22.09.2025 00:00 Do 31.03.2026 23:59, sil. III/4793 ul. 28. října - jízdní pás ve směru „centrum“ v úseku od křižovatky se sil. III/4793 ul. Vítkovická po</tdt:value>
+                      </tec:freeText>
+                    </tec:optionDirectCause>
+                  </tec:cause>
+                </tec:event>
+                <tec:loc>
+                  <lrc:method>
+                    <lrc:optionTMCLocationReferenceLink>
+                      <tlr:locationID>12102</tlr:locationID>
+                      <tlr:countryCode>2</tlr:countryCode>
+                      <tlr:locationTableNumber>25</tlr:locationTableNumber>
+                      <tlr:direction>false</tlr:direction>
+                      <tlr:bothDirections>false</tlr:bothDirections>
+                      <tlr:extent>0</tlr:extent>
+                      <tlr:extendedCountryCode>226</tlr:extendedCountryCode>
+                      <tlr:locationTableVersion>11</tlr:locationTableVersion>
+                    </lrc:optionTMCLocationReferenceLink>
+                  </lrc:method>
+                  <lrc:method>
+                    <lrc:optionGeographicLocationReferenceLink>
+                      <glr:geographicLineReference>
+                        <glr:linePoints>
+                          <glr:Longitude>851839</glr:Longitude>
+                          <glr:Latitude>2322305</glr:Latitude>
+                        </glr:linePoints>
+                        <glr:linePoints>
+                          <glr:Longitude>852030</glr:Longitude>
+                          <glr:Latitude>2322332</glr:Latitude>
+                        </glr:linePoints>
+                        <glr:isFuzzyLine>true</glr:isFuzzyLine>
+                      </glr:geographicLineReference>
+                    </lrc:optionGeographicLocationReferenceLink>
+                  </lrc:method>
+                  <lrc:method>
+                    <lrc:optionOpenLRLocationReferenceLink>
+                      <olr:version>1.5</olr:version>
+                      <olr:locationReference>
+                        <olr:optionLinearLocationReference>
+                          <olr:first>
+                            <olr:coordinate>
+                              <olr:longitude>851807</olr:longitude>
+                              <olr:latitude>2322300</olr:latitude>
+                            </olr:coordinate>
+                            <olr:lineProperties>
+                              <olr:frc olr:table="olr001_FunctionalRoadClass" olr:code="2"/>
+                              <olr:fow olr:table="olr002_FormOfWay" olr:code="2"/>
+                              <olr:bearing>
+                                <olr:value>55</olr:value>
+                              </olr:bearing>
+                            </olr:lineProperties>
+                            <olr:pathProperties>
+                              <olr:lfrcnp olr:table="olr001_FunctionalRoadClass" olr:code="4"/>
+                              <olr:dnp>
+                                <olr:value>415</olr:value>
+                              </olr:dnp>
+                              <olr:againstDrivingDirection>false</olr:againstDrivingDirection>
+                            </olr:pathProperties>
+                          </olr:first>
+                          <olr:last>
+                            <olr:coordinate>
+                              <olr:longitude>267</olr:longitude>
+                              <olr:latitude>37</olr:latitude>
+                            </olr:coordinate>
+                            <olr:lineProperties>
+                              <olr:frc olr:table="olr001_FunctionalRoadClass" olr:code="4"/>
+                              <olr:fow olr:table="olr002_FormOfWay" olr:code="2"/>
+                              <olr:bearing>
+                                <olr:value>184</olr:value>
+                              </olr:bearing>
+                            </olr:lineProperties>
+                          </olr:last>
+                          <olr:positiveOffset>
+                            <olr:value>50</olr:value>
+                          </olr:positiveOffset>
+                          <olr:negativeOffset>
+                            <olr:value>69</olr:value>
+                          </olr:negativeOffset>
+                        </olr:optionLinearLocationReference>
+                      </olr:locationReference>
+                    </lrc:optionOpenLRLocationReferenceLink>
+                  </lrc:method>
+                </tec:loc>
+              </tsf:ApplicationRootMessageML>
+            </tsf:ApplicationRootMessage>
+          </tsf:ServiceComponentFrameContent>
+        </tsf:ServiceComponent>
+      </tsf:ServiceComponentMultiplex>
+    </tsf:ServiceData>
+  </tsf:TransportFrame>
+</tsf:TPEGDocument>

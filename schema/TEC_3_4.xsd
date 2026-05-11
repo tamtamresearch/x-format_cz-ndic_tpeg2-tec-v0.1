@@ -1,0 +1,764 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- This XML schema is generated with tpegUMLconverter V3.1 at 2018-09-
+28 17:12, on basis of release 3.3 -->
+<xs:schema xmlns="http://www.tisa.org/TPEG/TEC_3_4" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tsf="http://www.tisa.org/TPEG/SFW_1_1" xmlns:tdt="http://www.tisa.org/TPEG/TPEGDataTypes_2_1" xmlns:mmc="http://www.tisa.org/TPEG/MMC_1_1" xmlns:lrc="http://www.tisa.org/TPEG/LRC_3_0" targetNamespace="http://www.tisa.org/TPEG/TEC_3_4" elementFormDefault="qualified" attributeFormDefault="qualified">
+	<xs:import namespace="http://www.tisa.org/TPEG/SFW_1_1" schemaLocation="SFW_1_1.xsd"/>
+	<xs:import namespace="http://www.tisa.org/TPEG/TPEGDataTypes_2_1" schemaLocation="TDT_2_1.xsd"/>
+	<xs:import namespace="http://www.tisa.org/TPEG/MMC_1_1" schemaLocation="MMC_1_1.xsd"/>
+	<xs:import namespace="http://www.tisa.org/TPEG/LRC_3_0" schemaLocation="LRC_3_0.xsd"/>
+	<xs:element name="TECMessage" type="TECMessage"><xs:annotation><xs:documentation>A TECMessage is either a normal message or a cancellation message. A normal message (i.e. other than cancellation messages) shall include the following:
+  one management container with management information related to the overall message (ID and version, expiry time)
+  one event container with one traffic flow effect and optional one or more causes with additional information
+  one location container with the location reference for the overall traffic message
+ The message management container is mandatory, the event- and location container are optional.
+ Event and ProblemLocation are modelled optionally because cancelmessages do not contain these elements: Cancellation messages shall not include an event and location container whereas normal messages (cancelFlag = false) shall include exactly one event and one location container</xs:documentation></xs:annotation></xs:element>
+	<xs:complexType name="TECMessage">
+		<xs:annotation><xs:documentation>A TECMessage is either a normal message or a cancellation message. A normal message (i.e. other than cancellation messages) shall include the following:
+  one management container with management information related to the overall message (ID and version, expiry time)
+  one event container with one traffic flow effect and optional one or more causes with additional information
+  one location container with the location reference for the overall traffic message
+ The message management container is mandatory, the event- and location container are optional.
+ Event and ProblemLocation are modelled optionally because cancelmessages do not contain these elements: Cancellation messages shall not include an event and location container whereas normal messages (cancelFlag = false) shall include exactly one event and one location container</xs:documentation></xs:annotation><xs:complexContent>
+			<xs:extension base="tsf:ApplicationRootMessageML">
+				<xs:sequence>
+					<xs:element name="mmt" type="MMCSwitch"><xs:annotation><xs:documentation>Message Management Container</xs:documentation></xs:annotation></xs:element>
+					<xs:element name="event" type="Event" minOccurs="0"><xs:annotation><xs:documentation>Describes the impact on the Traffic Flow and the related cause.</xs:documentation></xs:annotation></xs:element>
+					<xs:element name="loc" type="lrc:LocationReferencingContainer" minOccurs="0"><xs:annotation><xs:documentation>Location Reference Container (always included except for cancellation of a message)</xs:documentation></xs:annotation></xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="MMCSwitch">
+		<xs:annotation><xs:documentation>Abstract container included for formal reasons, to allow future extension of the MessageManagementContainer.</xs:documentation></xs:annotation><xs:sequence>
+			<xs:choice minOccurs="1" maxOccurs="1">
+				<xs:element name="optionMessageManagement" type="mmc:MessageManagementContainer" minOccurs="1" maxOccurs="1"/>
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Event">
+		<xs:annotation><xs:documentation>The Event component with its subordinated component Cause describes in general the impact on the traffic flow and the related cause.
+ For example: 'Stationary Traffic, (due to) Narrow Lanes'
+ Rules
+ * For a single event it should be possible to distinguish between the effect that describes an acute impairment of the traffic flow (e.g. stationary traffic) and the cause (e.g. roadworks). The latter can be seen as the reason for the traffic flow effect determined by the attribute effectCode. Furthermore the sub-component Cause can be used to inform or warn the driver for a special situation (e.g. oil on the road). The following combinations are possible:
+ a) A message contains only the Event component with its attribute effectCode that describes the impairment of the traffic flow directly.
+ b) The previous described element Event is expanded by one or more sub-components Cause. If a specific traffic flow is not available or shall not be given, the effectCode must set to 'unknown'.
+ * A (real) cause can be represented in the message by either a 'DirectCause' or a 'LinkedCause', but not both .
+ * Causes and sub-causes:
+ Each cause having more than one assigned sub-cause has an own sub-cause list. 
+ Simple terminals must support at least all causes, terminals with more memory might support sub-causes. In the latter case sub-causes should replace the (main-)cause completely. With other words: it is not necessary to combine causes and sub-cause to a meaningful grammar. 
+ * The component VehicleRestriction can be used to set a filter for different vehicles 
+ * Table tec001 and tec002 including all subCauseTables (tec1xx) are mainly taken from TMC-Event list (refer to ISO 14819-2:2005).
+ startTime and stopTime
+ describe the begin and the end of a traffic event. The terminal should use these values to calculate the validity of the event. This validity can be guaranteed by the provider only if the transmission channel is reliable, i.e. the messages expiry time does not elapse. If the message expiry time elapse the validity can not be guaranteed and it is recommended to ignore the message. Finally, the use of the message is up to the device.
+ LengthAffected and ProblemLength in CoreLocationDescription of LocationReferenceContainer
+ The ProblemLength in the location container describes the overall length of the event.
+ If LengthAffected is not defined within the Event component or any Cause of the Event Container, the ProblemLength has to be taken.
+ If the LengthAffected is given in a Event or Cause component it has to be taken only for this component.
+ In any case, the LengthAffected must not be greater than the ProblemLength.
+ If, in case of TMC location coding, neither LengthAffected nor ProblemLength is given, the total length between Primary and Secondary Location has to be taken.
+ The reference point for the TrafficFlowEffect and all Causes is
+ * the Start Location in case of TMC precise location referencing or
+ * the Secondary Location in case of TMC without precise location referencing or
+ * the begin of the location in case of AGORA (first core location).
+ Rounding of speed information
+ Speed information is always given in meter per seconds (m/s) since the general TPEG data type 'Velocity' is used. Depending on customer requirements the terminal has to convert and round these values.
+ For example:
+ [TODO: insert tables for rounding speed here]
+ The following formulae are used to calculate the values listed above in the table:
+ For steps of 10 km/h (10, 20, 30, ...)
+ * ROUND((v*3,6)/10)*10
+ For steps of 10 mi/h, starting with 10 mi/h (10, 20, 30, ...)
+ * ROUND((v*3,6)/1,604)/10)*10
+ For steps of 10 mi/h, starting with 5 mi/h (5, 15, 25, ...)
+ * ROUND((((v*3,6)/1,604)+5)/10)*10) - 5
+ 'ROUND' in this case is mathematical function to round values without fractional digits (e.g. 'java.lang.Math.round' in Java).</xs:documentation></xs:annotation><xs:sequence>
+			<xs:element name="effectCode" type="tec001_EffectCode"><xs:annotation><xs:documentation>Describes the impairment of the traffic flow.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="startTime" type="tdt:DateTime" minOccurs="0"><xs:annotation><xs:documentation>Date and time at which an event began or is scheduled to begin (used for presentation to the end-user).</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="stopTime" type="tdt:DateTime" minOccurs="0"><xs:annotation><xs:documentation>Date and time at which an event, or status information, ended or is scheduled to end (used for presentation to the end-user).</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="tendency" type="tec006_Tendency" minOccurs="0"><xs:annotation><xs:documentation>Tendency is related to the traffic flow speed indicating if this has been increasing, decreasing, or has remained constant. It is not a forecast of a future trend, nor does it relate to the length of the traffic queue.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="lengthAffected" type="tdt:DistanceMetres" minOccurs="0"><xs:annotation><xs:documentation>Length of the event in metres.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="averageSpeedAbsolute" type="tdt:Velocity" minOccurs="0"><xs:annotation><xs:documentation>The actual average speed in m/s at the given location. It is recommended to use this value for calculation of the route and estimated arrival time.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="delay" type="tdt:IntUnLoMB" minOccurs="0"><xs:annotation><xs:documentation>Delay in minutes. Only applicable to point locations, i.e. at border crossings.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="segmentSpeedLimit" type="tdt:Velocity" minOccurs="0"><xs:annotation><xs:documentation>Averaged speed limit (in m/s) within the problem location. Within the problem location multiple speed limits may exist (e.g. multiple reducing speed limits on entering a roadworks zone).
+ Shall be used as speed limit for re-routing, but not to display or warn the driver.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="expectedSpeedAbsolute" type="tdt:Velocity" minOccurs="0"><xs:annotation><xs:documentation>The expected (normal) speed in m/s for this time of the day, based on e.g. historical data. This speed may vary as function of the time of day, and can be markedly different from the free-flow speed (especially in rush hour conditions).</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="cause" type="Cause" minOccurs="0" maxOccurs="unbounded"><xs:annotation><xs:documentation>Defines the reason for the traffic problem (direct or linked cause)</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="advice" type="Advice" minOccurs="0" maxOccurs="unbounded"><xs:annotation><xs:documentation>Recommendations or prohibitions for the driver.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="vehicleRestriction" type="VehicleRestriction" minOccurs="0" maxOccurs="unbounded"><xs:annotation><xs:documentation>Vehicle types (restrictions) that are relevant for the message.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="diversionRoute" type="DiversionRoute" minOccurs="0" maxOccurs="unbounded"><xs:annotation><xs:documentation>Diversion information relating to the event.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="temporarySpeedLimit" type="TemporarySpeedLimit" minOccurs="0" maxOccurs="unbounded"><xs:annotation><xs:documentation>This is the temporary speed limit displayed on road signs associated with the Event. This data is for display to drivers.</xs:documentation></xs:annotation></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Cause">
+		<xs:annotation><xs:documentation>The cause template specifies the additional interface including a mandatory CauseCode for all instances.
+ There are two ways to encode 'events' where an effect and one or more causes belong together.
+ Direct Cause
+ One method is to combine both the effect and the cause by encoding together in the same message. This is called a 'direct_cause' and might be used in situations where no detailed information is given, e.g. about the location or the length of the linked cause. Both the cause and effect occur within the same location as defined by the LRC
+ Linked Cause
+ The other method is called a 'LinkedCause' and must be used in cases where detailed information are explicitly given.
+ For example: The location and the length of the cause differ from that of the effect and additional speed information is available. In this case the complete description of the traffic situation will be spread over two or more messages.</xs:documentation></xs:annotation><xs:sequence>
+			<xs:choice minOccurs="1" maxOccurs="1">
+				<xs:element name="optionDirectCause" type="DirectCause" minOccurs="1" maxOccurs="1"/>
+				<xs:element name="optionLinkedCause" type="LinkedCause" minOccurs="1" maxOccurs="1"/>
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DirectCause">
+		<xs:annotation><xs:documentation>The component DirectCause can be used to describe the reason for traffic congestion in general. 
+ The main reason for the separation of causes and the effect is that the real traffic situation can be described in meaningful way to the driver.
+ For example: Road closed (effectCode=7), (due to) objects on the road (causeCode 10).</xs:documentation></xs:annotation><xs:sequence>
+			<xs:element name="mainCause" type="tec002_CauseCode"/>
+			<xs:element name="warningLevel" type="tec003_WarningLevel"><xs:annotation><xs:documentation>The level 'informative' should be used for all traffic events, which may influence the driver's route in any way requiring normal level ofattention from the driver.
+ The 'danger levels' 1 to 3 should only be used for dangerous situations. Levels 1 to 3 are used in ascending levels of danger. (Level 1 - Danger; Level 3 - Highly Dangerous) 
+ Danger levels 1 to 3 in combination with unverifiedInformation=True should be used in case of an unverified danger. For example, a traffic management centre receives a call from a private "jam buster" reporting that there is a "vehicle travelling on the wrong side of the road", but this has not been confirmed by the police.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="unverifiedInformation" type="tdt:Boolean"><xs:annotation><xs:documentation>If element is set to 1 the given information has not been verified.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="subCause" type="tec100_SubCauseType" minOccurs="0"><xs:annotation><xs:documentation>Carries the value in the sub cause table defined by the mainCauseCode.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="lengthAffected" type="tdt:DistanceMetres" minOccurs="0"><xs:annotation><xs:documentation>Length of the cause in metres.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="laneRestrictionType" type="tec004_LaneRestriction" minOccurs="0"><xs:annotation><xs:documentation>Specifies whether lanes are closed or open.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="numberOfLanes" type="tdt:IntUnTi" minOccurs="0"><xs:annotation><xs:documentation>Specifies how many lanes are closed or open. If this element is not given, but laneRestrictionType indicates there are lane closures it means an unspecified number of lanes are closed , i.e. "one or more lanes closed".</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="freeText" type="tdt:LocalisedShortString" minOccurs="0" maxOccurs="unbounded"><xs:annotation><xs:documentation>Additional description</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="causeOffset" type="tdt:DistanceMetres" minOccurs="0"><xs:annotation><xs:documentation>Offset (metres) from the start of the Cause to the end of the Problem Location.When used together with the attribute lengthAffected, the Cause can be positioned within the Event more accurately. Without attribute causeOffset but with lengthAffected defined the cause position is not defined. If  neither lengthAffected nor causeOffset are defined the Cause spans the entire Problem Location.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="causeLanes" type="LaneNumber" minOccurs="0"><xs:annotation><xs:documentation>The lane number(s) for which the cause applies.</xs:documentation></xs:annotation></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="LinkedCause">
+		<xs:annotation><xs:documentation>LinkedCause specifies a link to a message providing more details about the cause, e.g. for a divergent location. A link to another message is uniquely specified by the combination of originatorServiceID, contentID,  applicationID, and messageID. The linked message can be found in the service component where those attributes are equal to the values given in that component: linkedMessage, COID, originatorSID. The applicationID points always to the TEC Application and is therefore not explicit given in this component.</xs:documentation></xs:annotation><xs:sequence>
+			<xs:element name="mainCause" type="tec002_CauseCode"/>
+			<xs:element name="linkedMessage" type="tdt:IntUnLoMB"><xs:annotation><xs:documentation>Contains a messageID as pointer to a message. If contentID and originatorSID is not given, the linked messages is contained in the actual component stream of the actual service.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="COID" type="tdt:IntUnTi" minOccurs="0"><xs:annotation><xs:documentation>In case of absence, the linked message can be found in the component stream that has the same contentID as the linking message.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="originatorSID" type="tdt:ServiceIdentifier" minOccurs="0"><xs:annotation><xs:documentation>In case of absence, the linked message can be found in the same service as the linking message.</xs:documentation></xs:annotation></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Advice">
+		<xs:annotation><xs:documentation>The advice component containsinformation on recommendations or prohibitions for the driver.</xs:documentation></xs:annotation><xs:sequence>
+			<xs:element name="adviceCode" type="tec005_AdviceCode" minOccurs="0"><xs:annotation><xs:documentation>Main categorisation of advice</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="subAdviceCode" type="tec200_SubAdviceType" minOccurs="0"><xs:annotation><xs:documentation>Detailed advice code</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="freeText" type="tdt:LocalisedShortString" minOccurs="0" maxOccurs="unbounded"><xs:annotation><xs:documentation>Additional advice</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="vehicleRestriction" type="VehicleRestriction" minOccurs="0" maxOccurs="unbounded"><xs:annotation><xs:documentation>Used when advice applies to specific vehicle types</xs:documentation></xs:annotation></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="VehicleRestriction">
+		<xs:annotation><xs:documentation>VehicleRestriction is used when the Event (or Diversion or Advice) is restricted to a specific vehicle type, e.g. only for lorries. If vehicleType is not present the subsequent RestictionType shall be applied to all types of vehicles.</xs:documentation></xs:annotation><xs:sequence>
+			<xs:element name="vehicleType" type="tec009_VehicleType" minOccurs="0"><xs:annotation><xs:documentation>Type of vehicle</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="restriction" type="RestrictionType" minOccurs="0" maxOccurs="unbounded"><xs:annotation><xs:documentation>Even when a particular vehicle type has been defined by tec009:VehicleType, RestrictionType may be used to specify further attributes to more closely define the vehicles for which the message applies. e.g. vehicle weight, vehicle height or other attribute, including vehicle destination.
+ For example:
+ "NoWintertyre" means the message applies to vehicles without winter tyres.
+ "width greater 300" means that the event or the closure affects only vehicles with a width greater than 3 metres.
+ "with destination in a given area" means the message is targeted  only at those vehicles whose destination is as specified in the area as attached to this restriction attribute.</xs:documentation></xs:annotation></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="DiversionRoute">
+		<xs:annotation><xs:documentation>Diversion route specifies one or more diversions.</xs:documentation></xs:annotation><xs:sequence>
+			<xs:element name="segmentModifier" type="SegmentModifier" maxOccurs="unbounded"><xs:annotation><xs:documentation>Data structure to define diversion</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="vehicleRestriction" type="VehicleRestriction" minOccurs="0" maxOccurs="unbounded"><xs:annotation><xs:documentation>Defines how diversion is restricted to specific vehicles</xs:documentation></xs:annotation></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TemporarySpeedLimit">
+		<xs:annotation><xs:documentation>One of the highly visible attributes of many roadworks is the imposed Temporary Speed Limit. This component provides the ability to define temporary speed limit information suitable for display to the driver.
+ Temporary SpeedLimit information associated with the event is defined in either kph or mph. Multiple sections with a different speed value may be provided with a length. The offset from the end of the Location Reference to the start of the first speed limit restriction allows the speed limit zone to be positioned independently of the cause.
+ A Vehicle Restriction can be added if needed.</xs:documentation></xs:annotation><xs:sequence>
+			<xs:element name="SpeedLimitSection" type="TemporarySpeedLimitSection" maxOccurs="unbounded"><xs:annotation><xs:documentation>Individual Section for the speed limit.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="unitIsMPH" type="tdt:Boolean"><xs:annotation><xs:documentation>Units definition for this Temporary Speed Limit. If speed limit should be displayed as mph, then this is set to true.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="offset" type="tdt:DistanceMetres" minOccurs="0"><xs:annotation><xs:documentation>Offset defines the distance from the start of the Temporary Speed Limit to the end of the Location reference. If not defined then first SpeedLimitSection starts at the beginning of the Location Reference.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="VehicleRestriction" type="VehicleRestriction" minOccurs="0" maxOccurs="unbounded"><xs:annotation><xs:documentation>One or more vehicle restrictions can be associated to each Temporary Speed Limit. This allows different speed limits to be signalled to different vehicles. (Lorries, Towing Vehicles) Without "VehicleRestriction" indicates all vehicles are affected.</xs:documentation></xs:annotation></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="LaneNumber">
+		<xs:annotation><xs:documentation>Lanes are numbered from the curb to the middle of the road. Right hand traffic lanes are therefore numbered from the right to the left relating to the driving direction. Left hand traffic lanes are numbered from left to right relating to the driving direction. The first lane has the number 0.
+ The lane numbering shall follow these rules:
+  Hard shoulder is always number 0
+   Leftmost lane in case of left hand driving (if exists)
+   Rightmost lane in case of right hand driving (if exists)
+   Additional hard shoulders are numbered consecutively (also applicable for hard shoulders next to the divider)
+  First drivable lane for vehicles is number 1 
+  All lanes which are physically available count
+  Lanes which are temporarily closed also count
+  Numbering is consecutive
+  &amp;nbsp;
+ If physical layout changes then a split of the location is recommended.</xs:documentation></xs:annotation><xs:sequence>
+			<xs:element name="hardShoulder" type="tdt:Boolean"><xs:annotation><xs:documentation>true, if the hard shoulder exists and is selected</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="lane1" type="tdt:Boolean"><xs:annotation><xs:documentation>true, if the lane is selected</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="lane2" type="tdt:Boolean"><xs:annotation><xs:documentation>true, if the lane is selected</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="lane3" type="tdt:Boolean"><xs:annotation><xs:documentation>true, if the lane is selected</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="lane4" type="tdt:Boolean"><xs:annotation><xs:documentation>true, if the lane is selected</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="lane5" type="tdt:Boolean"><xs:annotation><xs:documentation>true, if the lane is selected</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="lane6" type="tdt:Boolean"><xs:annotation><xs:documentation>true, if the lane is selected</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="lane7" type="tdt:Boolean"><xs:annotation><xs:documentation>true, if the lane is selected</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="lane8" type="tdt:Boolean"><xs:annotation><xs:documentation>true, if the lane is selected</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="lane9" type="tdt:Boolean"><xs:annotation><xs:documentation>true, if the lane is selected</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="lane10" type="tdt:Boolean"><xs:annotation><xs:documentation>true, if the lane is selected</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="lane11" type="tdt:Boolean"><xs:annotation><xs:documentation>true, if the lane is selected</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="lane12" type="tdt:Boolean"><xs:annotation><xs:documentation>true, if the lane is selected</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="lane13" type="tdt:Boolean"><xs:annotation><xs:documentation>true, if the lane is selected</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="lane14" type="tdt:Boolean"><xs:annotation><xs:documentation>true, if the lane is selected</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="lane15" type="tdt:Boolean"><xs:annotation><xs:documentation>true, if the lane is selected</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="lane16" type="tdt:Boolean"><xs:annotation><xs:documentation>true, if the lane is selected</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="lane17" type="tdt:Boolean"><xs:annotation><xs:documentation>true, if the lane is selected</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="lane18" type="tdt:Boolean"><xs:annotation><xs:documentation>true, if the lane is selected</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="lane19andMore" type="tdt:Boolean"><xs:annotation><xs:documentation>true, if the lane and potential further lanes are selected</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="innerSideHardShoulder" type="tdt:Boolean"><xs:annotation><xs:documentation>true, if an inner side hard shoulder exists and is selected</xs:documentation></xs:annotation></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="RestrictionType">
+		<xs:sequence>
+			<xs:element name="restrictionType" type="tec007_RestrictionType"><xs:annotation><xs:documentation>Defines the sort of restriction</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="restrictionValue" type="tdt:IntUnLoMB" minOccurs="0"><xs:annotation><xs:documentation>Defines value associated to the restrictions where applicable</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="restrictionLocation" type="lrc:LocationReferencingContainer" minOccurs="0"><xs:annotation><xs:documentation>Restriction filter for specific destination</xs:documentation></xs:annotation></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SegmentModifier">
+		<xs:sequence>
+			<xs:element name="diversionRoadType" type="tec008_DiversionRoadType"><xs:annotation><xs:documentation>Type of diversion road</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="segmentLocation" type="lrc:LocationReferencingContainer"><xs:annotation><xs:documentation>Position of segment</xs:documentation></xs:annotation></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TemporarySpeedLimitSection">
+		<xs:annotation><xs:documentation>Each section of the speed Limit is defined by a speed value and length.
+ A value for use in Wet conditions is also optionally available.</xs:documentation></xs:annotation><xs:sequence>
+			<xs:element name="speedLimitValue" type="tdt:IntUnTi"><xs:annotation><xs:documentation>Speed Limit numerical value in kph or mph.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="speedLimitValueWet" type="tdt:IntUnTi" minOccurs="0"><xs:annotation><xs:documentation>Speed Limit numerical value to be used in wet conditions; in kph or mph.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="speedLimitLength" type="tdt:DistanceMetres" minOccurs="0"><xs:annotation><xs:documentation>Length of the SpeedLimitSection, If this is not defined, then the section finishes at end of the Problem Location</xs:documentation></xs:annotation></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="tec001_EffectCode">
+		<xs:attribute name="table" type="xs:string" fixed="tec001_EffectCode" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="7"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec002_CauseCode">
+		<xs:attribute name="table" type="xs:string" fixed="tec002_CauseCode" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec003_WarningLevel">
+		<xs:attribute name="table" type="xs:string" fixed="tec003_WarningLevel" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="4"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec004_LaneRestriction">
+		<xs:attribute name="table" type="xs:string" fixed="tec004_LaneRestriction" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec005_AdviceCode">
+		<xs:attribute name="table" type="xs:string" fixed="tec005_AdviceCode" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec006_Tendency">
+		<xs:attribute name="table" type="xs:string" fixed="tec006_Tendency" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec007_RestrictionType">
+		<xs:attribute name="table" type="xs:string" fixed="tec007_RestrictionType" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec008_DiversionRoadType">
+		<xs:attribute name="table" type="xs:string" fixed="tec008_DiversionRoadType" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec009_VehicleType">
+		<xs:attribute name="table" type="xs:string" fixed="tec009_VehicleType" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec010_AtGradeJunctionClosure">
+		<xs:attribute name="table" type="xs:string" fixed="tec010_AtGradeJunctionClosure" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="0"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec100_SubCauseType">
+		<xs:annotation><xs:documentation>The SubCauseType defines the generic type applying different tables according to the different mainCauses.
+ Valid entries for attributes of this type are listed in the tables:
+ tec101:TrafficCongestion
+ tec102:Accident
+ tec103:Roadworks
+ tec104:NarrowLanes
+ tec105:Impassability
+ tec106:SlipperyRoad
+ tec108:Fire
+ tec109:HazardousDrivingConditions
+ tec110:ObjectsOnTheRoad
+ tec111:AnimalsOnRoadway
+ tec112:PeopleOnRoadway
+ tec113:BrokenDownVehicles
+ tec115:RescueAndRecoveryWorkInProgress
+ tec116:RegulatoryMeasure
+ tec117:ExtremeWeatherConditions
+ tec118:VisibilityReduced
+ tec119:Precipitation
+ tec120:RecklessPersons
+ tec123:MajorEvent
+ tec124:ServiceNotOperating
+ tec125:ServiceNotUseable
+ tec126:SlowMovingVehicles
+ tec127:DangerousEndOfQueue
+ tec128:RiskOfFire
+ tec129:TimeDelay
+ tec130:PoliceCheckpoint
+ tec131:MalfunctioningRoadsideEquipment.
+ Note: In the case a client device is unable to decode a subCause code the original mainCause is to be used.</xs:documentation></xs:annotation><xs:attribute name="table" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="code" type="xs:unsignedByte" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="tec101_TrafficCongestion">
+		<xs:attribute name="table" type="xs:string" fixed="tec101_TrafficCongestion" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec102_Accident">
+		<xs:attribute name="table" type="xs:string" fixed="tec102_Accident" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec103_Roadworks">
+		<xs:attribute name="table" type="xs:string" fixed="tec103_Roadworks" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec104_NarrowLanes">
+		<xs:attribute name="table" type="xs:string" fixed="tec104_NarrowLanes" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec105_Impassability">
+		<xs:attribute name="table" type="xs:string" fixed="tec105_Impassability" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec106_SlipperyRoad">
+		<xs:attribute name="table" type="xs:string" fixed="tec106_SlipperyRoad" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec108_Fire">
+		<xs:attribute name="table" type="xs:string" fixed="tec108_Fire" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec109_HazardousDrivingConditions">
+		<xs:attribute name="table" type="xs:string" fixed="tec109_HazardousDrivingConditions" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec110_ObjectsOnTheRoad">
+		<xs:attribute name="table" type="xs:string" fixed="tec110_ObjectsOnTheRoad" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec111_AnimalsOnRoadway">
+		<xs:attribute name="table" type="xs:string" fixed="tec111_AnimalsOnRoadway" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec112_PeopleOnRoadway">
+		<xs:attribute name="table" type="xs:string" fixed="tec112_PeopleOnRoadway" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec113_BrokenDownVehicles">
+		<xs:attribute name="table" type="xs:string" fixed="tec113_BrokenDownVehicles" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec115_RescueAndRecoveryWorkInProgress">
+		<xs:attribute name="table" type="xs:string" fixed="tec115_RescueAndRecoveryWorkInProgress" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec116_RegulatoryMeasure">
+		<xs:attribute name="table" type="xs:string" fixed="tec116_RegulatoryMeasure" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec117_ExtremeWeatherConditions">
+		<xs:attribute name="table" type="xs:string" fixed="tec117_ExtremeWeatherConditions" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec118_VisibilityReduced">
+		<xs:attribute name="table" type="xs:string" fixed="tec118_VisibilityReduced" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec119_Precipitation">
+		<xs:attribute name="table" type="xs:string" fixed="tec119_Precipitation" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec120_RecklessPersons">
+		<xs:attribute name="table" type="xs:string" fixed="tec120_RecklessPersons" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec123_MajorEvent">
+		<xs:attribute name="table" type="xs:string" fixed="tec123_MajorEvent" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec124_ServiceNotOperating">
+		<xs:attribute name="table" type="xs:string" fixed="tec124_ServiceNotOperating" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec125_ServiceNotUseable">
+		<xs:attribute name="table" type="xs:string" fixed="tec125_ServiceNotUseable" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec126_SlowMovingVehicles">
+		<xs:attribute name="table" type="xs:string" fixed="tec126_SlowMovingVehicles" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec127_DangerousEndOfQueue">
+		<xs:attribute name="table" type="xs:string" fixed="tec127_DangerousEndOfQueue" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec128_RiskOfFire">
+		<xs:attribute name="table" type="xs:string" fixed="tec128_RiskOfFire" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec129_TimeDelay">
+		<xs:attribute name="table" type="xs:string" fixed="tec129_TimeDelay" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec130_PoliceCheckpoint">
+		<xs:attribute name="table" type="xs:string" fixed="tec130_PoliceCheckpoint" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec131_MalfunctioningRoadsideEquipment">
+		<xs:attribute name="table" type="xs:string" fixed="tec131_MalfunctioningRoadsideEquipment" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec200_SubAdviceType">
+		<xs:annotation><xs:documentation>The SubAdviceType defines the generic type applying different tables appropriate to the different mainAdviceCodes
+ Valid entries for attributes of this type are listed in the tables:
+ tec202:OvertakingNotAllowed
+ tec203:DrivingNotAllowed
+ tec207:GiveWayToVehiclesFromBehind
+ tec208:FollowDiversion
+ tec213:DriveCarefully
+ tec214:DoNotLeaveYourVehicle.
+ tec216:UseTollLanes
+ Note:
+ In the case a client device is unable to decode a subadvice code the original advice is to be used.</xs:documentation></xs:annotation><xs:attribute name="table" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="code" type="xs:unsignedByte" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="tec202_OvertakingNotAllowed">
+		<xs:attribute name="table" type="xs:string" fixed="tec202_OvertakingNotAllowed" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec203_DrivingNotAllowed">
+		<xs:attribute name="table" type="xs:string" fixed="tec203_DrivingNotAllowed" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec207_GiveWayToVehiclesFromBehind">
+		<xs:attribute name="table" type="xs:string" fixed="tec207_GiveWayToVehiclesFromBehind" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec208_FollowDiversion">
+		<xs:attribute name="table" type="xs:string" fixed="tec208_FollowDiversion" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec213_DriveCarefully">
+		<xs:attribute name="table" type="xs:string" fixed="tec213_DriveCarefully" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec214_DoNotLeaveYourVehicle">
+		<xs:attribute name="table" type="xs:string" fixed="tec214_DoNotLeaveYourVehicle" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="tec216_UseTollLanes">
+		<xs:attribute name="table" type="xs:string" fixed="tec216_UseTollLanes" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="255"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+</xs:schema>

@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tsf:TPEGDocument xmlns:tsf="http://www.tisa.org/TPEG/SFW_1_1" xmlns:tdt="http://www.tisa.org/TPEG/TPEGDataTypes_2_1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tec="http://www.tisa.org/TPEG/TEC_3_4" xmlns:mmc="http://www.tisa.org/TPEG/MMC_1_1" xmlns:lrc="http://www.tisa.org/TPEG/LRC_3_0" xmlns:glr="http://www.tisa.org/TPEG/GLR_2_1" xmlns:olr="http://www.tisa.org/TPEG/OLR_1_1" xmlns:etl="http://www.tisa.org/TPEG/ETL_1_0" xmlns:tlr="http://www.tisa.org/TPEG/TLR_2_0" xmlns:dlr="http://www.tisa.org/TPEG/DLR_4_0" xmlns:ulr="http://www.tisa.org/TPEG/ULR_0_8" xmlns:sni="http://www.tisa.org/TPEG/SNI_3_3" xmlns:tfp="http://www.tisa.org/TPEG/TFP_1_1" xmlns:wea="http://www.tisa.org/TPEG/WEA_1_2" tsf:timeStamp="2026-02-24T13:34:05+01:00" tsf:version="3" tsf:docType="fullRepository">
+  <tsf:TransportFrame>
+    <tsf:ServiceData>
+      <tsf:SID>
+        <tdt:SID_A>0</tdt:SID_A>
+        <tdt:SID_B>100</tdt:SID_B>
+        <tdt:SID_C>100</tdt:SID_C>
+      </tsf:SID>
+      <tsf:ServiceComponentMultiplex>
+        <tsf:ServiceComponent tsf:applicationId="0" tsf:contentId="0">
+          <tsf:ServiceComponentFrameContent xsi:type="tsf:ServCompFrameProtected">
+            <tsf:SCID>0</tsf:SCID>
+            <tsf:ApplicationRootMessage>
+              <tsf:ApplicationRootMessageML xsi:type="sni:SNI1Template">
+                <sni:optionCurrentServiceInformation>
+                  <sni:serviceName>TPEG_CZ_Events</sni:serviceName>
+                  <sni:serviceDescription>Dopravní události pro celou ČR</sni:serviceDescription>
+                </sni:optionCurrentServiceInformation>
+              </tsf:ApplicationRootMessageML>
+            </tsf:ApplicationRootMessage>
+            <tsf:ApplicationRootMessage>
+              <tsf:ApplicationRootMessageML xsi:type="sni:SNI1Template">
+                <sni:optionGST1_FastTuningTable>
+                  <sni:tableVersion>1</sni:tableVersion>
+                  <sni:characterEncoding sni:table="sni002_CharacterEncoding" sni:code="125"/>
+                  <sni:tableEntry>
+                    <sni:SCID>1</sni:SCID>
+                    <sni:contentID>1</sni:contentID>
+                    <sni:applicationID>5</sni:applicationID>
+                    <sni:safetyFlagIsSet>false</sni:safetyFlagIsSet>
+                  </sni:tableEntry>
+                </sni:optionGST1_FastTuningTable>
+              </tsf:ApplicationRootMessageML>
+            </tsf:ApplicationRootMessage>
+          </tsf:ServiceComponentFrameContent>
+        </tsf:ServiceComponent>
+        <tsf:ServiceComponent tsf:applicationId="5" tsf:contentId="1">
+          <tsf:ServiceComponentFrameContent xsi:type="tsf:ServCompFramePrioritisedCountedProtected">
+            <tsf:SCID>1</tsf:SCID>
+            <tsf:Priority tdt:table="typ007_Priority" tdt:code="0"/>
+            <tsf:MessageCount>2</tsf:MessageCount>
+            <tsf:ApplicationRootMessage>
+              <tsf:ApplicationRootMessageML xsi:type="tec:TECMessage">
+                <tec:mmt>
+                  <tec:optionMessageManagement>
+                    <!-- DATEX II: situation=cbcf561b-4fef-4088-a726-aa949304d495 -->
+                    <mmc:messageID>4021329788</mmc:messageID>
+                    <mmc:versionID>1</mmc:versionID>
+                    <mmc:messageExpiryTime>2030-12-31T08:29:00+01:00</mmc:messageExpiryTime>
+                    <mmc:cancelFlag>false</mmc:cancelFlag>
+                    <mmc:messageGenerationTime>2026-02-24T13:34:05+01:00</mmc:messageGenerationTime>
+                  </tec:optionMessageManagement>
+                </tec:mmt>
+                <tec:event>
+                  <tec:effectCode tec:table="tec001_EffectCode" tec:code="7"/>
+                  <tec:startTime>2021-06-16T08:29:00+02:00</tec:startTime>
+                  <tec:stopTime>2030-12-31T08:29:00+01:00</tec:stopTime>
+                  <tec:cause>
+                    <tec:optionDirectCause>
+                      <tec:mainCause tec:table="tec002_CauseCode" tec:code="10"/>
+                      <tec:warningLevel tec:table="tec003_WarningLevel" tec:code="3"/>
+                      <tec:unverifiedInformation>true</tec:unverifiedInformation>
+                      <tec:freeText>
+                        <tdt:languageCode tdt:table="typ001_LanguageCode" tdt:code="28"/>
+                        <tdt:value>komunikace, v katastru obce Vráto, okr. České Budějovice, neprůjezdná
+                                komunikace, Od 16.06.2021 08:29 Do 31.12.2030 08:29
+                            </tdt:value>
+                      </tec:freeText>
+                    </tec:optionDirectCause>
+                  </tec:cause>
+                </tec:event>
+                <tec:loc>
+                  <lrc:method>
+                    <lrc:optionGeographicLocationReferenceLink>
+                      <glr:geographicLineReference>
+                        <glr:linePoints>
+                          <glr:Longitude>676828</glr:Longitude>
+                          <glr:Latitude>2282845</glr:Latitude>
+                        </glr:linePoints>
+                        <glr:linePoints>
+                          <glr:Longitude>676791</glr:Longitude>
+                          <glr:Latitude>2282811</glr:Latitude>
+                        </glr:linePoints>
+                        <glr:isFuzzyLine>true</glr:isFuzzyLine>
+                      </glr:geographicLineReference>
+                    </lrc:optionGeographicLocationReferenceLink>
+                  </lrc:method>
+                  <lrc:method>
+                    <lrc:optionOpenLRLocationReferenceLink>
+                      <olr:version>1.5</olr:version>
+                      <olr:locationReference>
+                        <olr:optionLinearLocationReference>
+                          <olr:first>
+                            <olr:coordinate>
+                              <olr:longitude>676845</olr:longitude>
+                              <olr:latitude>2282962</olr:latitude>
+                            </olr:coordinate>
+                            <olr:lineProperties>
+                              <olr:frc olr:table="olr001_FunctionalRoadClass" olr:code="7"/>
+                              <olr:fow olr:table="olr002_FormOfWay" olr:code="3"/>
+                              <olr:bearing>
+                                <olr:value>115</olr:value>
+                              </olr:bearing>
+                            </olr:lineProperties>
+                            <olr:pathProperties>
+                              <olr:lfrcnp olr:table="olr001_FunctionalRoadClass" olr:code="7"/>
+                              <olr:dnp>
+                                <olr:value>769</olr:value>
+                              </olr:dnp>
+                              <olr:againstDrivingDirection>false</olr:againstDrivingDirection>
+                            </olr:pathProperties>
+                          </olr:first>
+                          <olr:last>
+                            <olr:coordinate>
+                              <olr:longitude>-135</olr:longitude>
+                              <olr:latitude>-294</olr:latitude>
+                            </olr:coordinate>
+                            <olr:lineProperties>
+                              <olr:frc olr:table="olr001_FunctionalRoadClass" olr:code="7"/>
+                              <olr:fow olr:table="olr002_FormOfWay" olr:code="3"/>
+                              <olr:bearing>
+                                <olr:value>15</olr:value>
+                              </olr:bearing>
+                            </olr:lineProperties>
+                          </olr:last>
+                          <olr:positiveOffset>
+                            <olr:value>296</olr:value>
+                          </olr:positiveOffset>
+                          <olr:negativeOffset>
+                            <olr:value>374</olr:value>
+                          </olr:negativeOffset>
+                        </olr:optionLinearLocationReference>
+                      </olr:locationReference>
+                    </lrc:optionOpenLRLocationReferenceLink>
+                  </lrc:method>
+                  <lrc:method>
+                    <lrc:optionOpenLRLocationReferenceLink>
+                      <olr:version>1.5</olr:version>
+                      <olr:locationReference>
+                        <olr:optionLinearLocationReference>
+                          <olr:first>
+                            <olr:coordinate>
+                              <olr:longitude>676710</olr:longitude>
+                              <olr:latitude>2282668</olr:latitude>
+                            </olr:coordinate>
+                            <olr:lineProperties>
+                              <olr:frc olr:table="olr001_FunctionalRoadClass" olr:code="7"/>
+                              <olr:fow olr:table="olr002_FormOfWay" olr:code="3"/>
+                              <olr:bearing>
+                                <olr:value>15</olr:value>
+                              </olr:bearing>
+                            </olr:lineProperties>
+                            <olr:pathProperties>
+                              <olr:lfrcnp olr:table="olr001_FunctionalRoadClass" olr:code="7"/>
+                              <olr:dnp>
+                                <olr:value>769</olr:value>
+                              </olr:dnp>
+                              <olr:againstDrivingDirection>false</olr:againstDrivingDirection>
+                            </olr:pathProperties>
+                          </olr:first>
+                          <olr:last>
+                            <olr:coordinate>
+                              <olr:longitude>135</olr:longitude>
+                              <olr:latitude>294</olr:latitude>
+                            </olr:coordinate>
+                            <olr:lineProperties>
+                              <olr:frc olr:table="olr001_FunctionalRoadClass" olr:code="7"/>
+                              <olr:fow olr:table="olr002_FormOfWay" olr:code="3"/>
+                              <olr:bearing>
+                                <olr:value>115</olr:value>
+                              </olr:bearing>
+                            </olr:lineProperties>
+                          </olr:last>
+                          <olr:positiveOffset>
+                            <olr:value>374</olr:value>
+                          </olr:positiveOffset>
+                          <olr:negativeOffset>
+                            <olr:value>296</olr:value>
+                          </olr:negativeOffset>
+                        </olr:optionLinearLocationReference>
+                      </olr:locationReference>
+                    </lrc:optionOpenLRLocationReferenceLink>
+                  </lrc:method>
+                </tec:loc>
+              </tsf:ApplicationRootMessageML>
+            </tsf:ApplicationRootMessage>
+            <tsf:ApplicationRootMessage>
+              <tsf:ApplicationRootMessageML xsi:type="tec:TECMessage">
+                <tec:mmt>
+                  <tec:optionMessageManagement>
+                    <!-- DATEX II: situation=d1e2f3a4-b5c6-7890-abcd-ef1234567890 -->
+                    <mmc:messageID>2132310048</mmc:messageID>
+                    <mmc:versionID>1</mmc:versionID>
+                    <mmc:messageExpiryTime>2030-12-31T09:00:00+01:00</mmc:messageExpiryTime>
+                    <mmc:cancelFlag>false</mmc:cancelFlag>
+                    <mmc:messageGenerationTime>2026-02-24T13:34:05+01:00</mmc:messageGenerationTime>
+                  </tec:optionMessageManagement>
+                </tec:mmt>
+                <tec:event>
+                  <tec:effectCode tec:table="tec001_EffectCode" tec:code="1"/>
+                  <tec:startTime>2021-06-16T09:00:00+02:00</tec:startTime>
+                  <tec:stopTime>2030-12-31T09:00:00+01:00</tec:stopTime>
+                  <tec:cause>
+                    <tec:optionDirectCause>
+                      <tec:mainCause tec:table="tec002_CauseCode" tec:code="10"/>
+                      <tec:warningLevel tec:table="tec003_WarningLevel" tec:code="3"/>
+                      <tec:unverifiedInformation>false</tec:unverifiedInformation>
+                    </tec:optionDirectCause>
+                  </tec:cause>
+                </tec:event>
+                <tec:loc>
+                  <lrc:method>
+                    <lrc:optionOpenLRLocationReferenceLink>
+                      <olr:version>1.5</olr:version>
+                      <olr:locationReference>
+                        <olr:optionPointAlongLineLocationReference>
+                          <olr:pointAlongLine>
+                            <olr:first>
+                              <olr:coordinate>
+                                <olr:longitude>677147</olr:longitude>
+                                <olr:latitude>2283099</olr:latitude>
+                              </olr:coordinate>
+                              <olr:lineProperties>
+                                <olr:frc olr:table="olr001_FunctionalRoadClass" olr:code="3"/>
+                                <olr:fow olr:table="olr002_FormOfWay" olr:code="3"/>
+                                <olr:bearing>
+                                  <olr:value>64</olr:value>
+                                </olr:bearing>
+                              </olr:lineProperties>
+                              <olr:pathProperties>
+                                <olr:lfrcnp olr:table="olr001_FunctionalRoadClass" olr:code="3"/>
+                                <olr:dnp>
+                                  <olr:value>500</olr:value>
+                                </olr:dnp>
+                                <olr:againstDrivingDirection>false</olr:againstDrivingDirection>
+                              </olr:pathProperties>
+                            </olr:first>
+                            <olr:last>
+                              <olr:coordinate>
+                                <olr:longitude>466</olr:longitude>
+                                <olr:latitude>0</olr:latitude>
+                              </olr:coordinate>
+                              <olr:lineProperties>
+                                <olr:frc olr:table="olr001_FunctionalRoadClass" olr:code="3"/>
+                                <olr:fow olr:table="olr002_FormOfWay" olr:code="3"/>
+                                <olr:bearing>
+                                  <olr:value>192</olr:value>
+                                </olr:bearing>
+                              </olr:lineProperties>
+                            </olr:last>
+                            <olr:sideOfRoad olr:table="olr004_SideOfRoad" olr:code="0"/>
+                            <olr:orientation olr:table="olr003_Orientation" olr:code="0"/>
+                          </olr:pointAlongLine>
+                        </olr:optionPointAlongLineLocationReference>
+                      </olr:locationReference>
+                    </lrc:optionOpenLRLocationReferenceLink>
+                  </lrc:method>
+                </tec:loc>
+              </tsf:ApplicationRootMessageML>
+            </tsf:ApplicationRootMessage>
+          </tsf:ServiceComponentFrameContent>
+        </tsf:ServiceComponent>
+      </tsf:ServiceComponentMultiplex>
+    </tsf:ServiceData>
+  </tsf:TransportFrame>
+</tsf:TPEGDocument>

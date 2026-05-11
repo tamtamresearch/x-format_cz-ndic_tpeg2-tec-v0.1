@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tsf:TPEGDocument xmlns:tsf="http://www.tisa.org/TPEG/SFW_1_1" xmlns:tdt="http://www.tisa.org/TPEG/TPEGDataTypes_2_1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tec="http://www.tisa.org/TPEG/TEC_3_4" xmlns:mmc="http://www.tisa.org/TPEG/MMC_1_1" xmlns:lrc="http://www.tisa.org/TPEG/LRC_3_0" xmlns:glr="http://www.tisa.org/TPEG/GLR_2_1" xmlns:olr="http://www.tisa.org/TPEG/OLR_1_1" xmlns:etl="http://www.tisa.org/TPEG/ETL_1_0" xmlns:tlr="http://www.tisa.org/TPEG/TLR_2_0" xmlns:dlr="http://www.tisa.org/TPEG/DLR_4_0" xmlns:ulr="http://www.tisa.org/TPEG/ULR_0_8" xmlns:sni="http://www.tisa.org/TPEG/SNI_3_3" xmlns:tfp="http://www.tisa.org/TPEG/TFP_1_1" xmlns:wea="http://www.tisa.org/TPEG/WEA_1_2" tsf:timeStamp="2017-07-24T13:42:12+02:00" tsf:version="3" tsf:docType="fullRepository">
+  <tsf:TransportFrame>
+    <tsf:ServiceData>
+      <tsf:SID>
+        <tdt:SID_A>0</tdt:SID_A>
+        <tdt:SID_B>100</tdt:SID_B>
+        <tdt:SID_C>100</tdt:SID_C>
+      </tsf:SID>
+      <tsf:ServiceComponentMultiplex>
+        <tsf:ServiceComponent tsf:applicationId="0" tsf:contentId="0">
+          <tsf:ServiceComponentFrameContent xsi:type="tsf:ServCompFrameProtected">
+            <tsf:SCID>0</tsf:SCID>
+            <tsf:ApplicationRootMessage>
+              <tsf:ApplicationRootMessageML xsi:type="sni:SNI1Template">
+                <sni:optionCurrentServiceInformation>
+                  <sni:serviceName>TPEG_CZ_Events</sni:serviceName>
+                  <sni:serviceDescription>Dopravní události pro celou ČR</sni:serviceDescription>
+                </sni:optionCurrentServiceInformation>
+              </tsf:ApplicationRootMessageML>
+            </tsf:ApplicationRootMessage>
+            <tsf:ApplicationRootMessage>
+              <tsf:ApplicationRootMessageML xsi:type="sni:SNI1Template">
+                <sni:optionGST1_FastTuningTable>
+                  <sni:tableVersion>1</sni:tableVersion>
+                  <sni:characterEncoding sni:table="sni002_CharacterEncoding" sni:code="125"/>
+                  <sni:tableEntry>
+                    <sni:SCID>1</sni:SCID>
+                    <sni:contentID>1</sni:contentID>
+                    <sni:applicationID>5</sni:applicationID>
+                    <sni:safetyFlagIsSet>false</sni:safetyFlagIsSet>
+                  </sni:tableEntry>
+                </sni:optionGST1_FastTuningTable>
+              </tsf:ApplicationRootMessageML>
+            </tsf:ApplicationRootMessage>
+          </tsf:ServiceComponentFrameContent>
+        </tsf:ServiceComponent>
+        <tsf:ServiceComponent tsf:applicationId="5" tsf:contentId="1">
+          <tsf:ServiceComponentFrameContent xsi:type="tsf:ServCompFramePrioritisedCountedProtected">
+            <tsf:SCID>1</tsf:SCID>
+            <tsf:Priority tdt:table="typ007_Priority" tdt:code="0"/>
+            <tsf:MessageCount>1</tsf:MessageCount>
+            <tsf:ApplicationRootMessage>
+              <tsf:ApplicationRootMessageML xsi:type="tec:TECMessage">
+                <tec:mmt>
+                  <tec:optionMessageManagement>
+                    <!-- DATEX II: situation=rerouting-test-sit-001 -->
+                    <mmc:messageID>3347607640</mmc:messageID>
+                    <mmc:versionID>1</mmc:versionID>
+                    <mmc:messageExpiryTime>2017-07-24T15:45:00+02:00</mmc:messageExpiryTime>
+                    <mmc:cancelFlag>false</mmc:cancelFlag>
+                    <mmc:messageGenerationTime>2017-07-24T13:42:12+02:00</mmc:messageGenerationTime>
+                  </tec:optionMessageManagement>
+                </tec:mmt>
+                <tec:event>
+                  <tec:effectCode tec:table="tec001_EffectCode" tec:code="1"/>
+                  <tec:startTime>2017-07-24T13:40:00+02:00</tec:startTime>
+                  <tec:stopTime>2017-07-24T15:45:00+02:00</tec:stopTime>
+                  <tec:cause>
+                    <tec:optionDirectCause>
+                      <tec:mainCause tec:table="tec002_CauseCode" tec:code="9"/>
+                      <tec:warningLevel tec:table="tec003_WarningLevel" tec:code="1"/>
+                      <tec:unverifiedInformation>false</tec:unverifiedInformation>
+                    </tec:optionDirectCause>
+                  </tec:cause>
+                  <tec:advice>
+                    <tec:adviceCode tec:table="tec005_AdviceCode" tec:code="8"/>
+                    <tec:subAdviceCode tec:table="tec208_FollowDiversion" tec:code="1"/>
+                  </tec:advice>
+                  <tec:advice>
+                    <tec:adviceCode tec:table="tec005_AdviceCode" tec:code="10"/>
+                  </tec:advice>
+                </tec:event>
+                <tec:loc>
+                  <lrc:method>
+                    <lrc:optionTMCLocationReferenceLink>
+                      <tlr:locationID>1347</tlr:locationID>
+                      <tlr:countryCode>2</tlr:countryCode>
+                      <tlr:locationTableNumber>25</tlr:locationTableNumber>
+                      <tlr:direction>false</tlr:direction>
+                      <tlr:bothDirections>false</tlr:bothDirections>
+                      <tlr:extent>0</tlr:extent>
+                      <tlr:extendedCountryCode>226</tlr:extendedCountryCode>
+                      <tlr:locationTableVersion>6</tlr:locationTableVersion>
+                    </lrc:optionTMCLocationReferenceLink>
+                  </lrc:method>
+                </tec:loc>
+              </tsf:ApplicationRootMessageML>
+            </tsf:ApplicationRootMessage>
+          </tsf:ServiceComponentFrameContent>
+        </tsf:ServiceComponent>
+      </tsf:ServiceComponentMultiplex>
+    </tsf:ServiceData>
+  </tsf:TransportFrame>
+</tsf:TPEGDocument>

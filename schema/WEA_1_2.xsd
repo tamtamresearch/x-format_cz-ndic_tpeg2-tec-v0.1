@@ -1,0 +1,490 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<xs:schema xmlns="https://www.tisa.org/TPEG/WEA_1_2" xmlns:xs="https://www.w3.org/2001/XMLSchema" xmlns:tsf="https://www.tisa.org/TPEG/SFW_1_1" xmlns:tdt="https://www.tisa.org/TPEG/TPEGDataTypes_2_1" xmlns:mmc="https://www.tisa.org/TPEG/MMC_1_1" xmlns:lrc="https://www.tisa.org/TPEG/LRC_3_0" targetNamespace="https://www.tisa.org/TPEG/WEA_1_2" elementFormDefault="qualified" attributeFormDefault="qualified">
+	<xs:import namespace="https://www.tisa.org/TPEG/SFW_1_1" schemaLocation="SFW_1_1.xsd"/>
+	<xs:import namespace="https://www.tisa.org/TPEG/TPEGDataTypes_2_1" schemaLocation="TDT_2_1.xsd"/>
+	<xs:import namespace="https://www.tisa.org/TPEG/MMC_1_1" schemaLocation="MMC_1_1.xsd"/>
+	<xs:import namespace="https://www.tisa.org/TPEG/LRC_3_0" schemaLocation="LRC_3_0.xsd"/>
+	<xs:element name="WeatherMessage" type="WeatherMessage"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Each WEA message is associated with a single location and contains one or more weather reports (excluding the case of a cancellation).</xs:documentation></xs:annotation></xs:element>
+	<xs:complexType name="WeatherMessage">
+		<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Each WEA message is associated with a single location and contains one or more weather reports (excluding the case of a cancellation).</xs:documentation></xs:annotation><xs:complexContent>
+			<xs:extension base="tsf:ApplicationRootMessageML">
+				<xs:sequence>
+					<xs:element name="mmt" type="MMCSwitch"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Message Management Container</xs:documentation></xs:annotation></xs:element>
+					<xs:element name="weatherInfo" type="WeatherInformation" minOccurs="0"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Weather Information (always included except for cancellation of a message)</xs:documentation></xs:annotation></xs:element>
+					<xs:element name="loc" type="lrc:LocationReferencingContainer" minOccurs="0"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Location Referencing Container (always included except for cancellation of a message)</xs:documentation></xs:annotation></xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="WeatherInformation">
+		<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>A Weather report can be either a simple single level report or can be made into a hierarchy of reports associated to increasingly smaller time periods.</xs:documentation></xs:annotation><xs:sequence>
+			<xs:element name="geographicalSignificance" type="wea011_GeoSignificance"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Defines the geographical significance  or  "spatial extent" of the report.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="weatherReport" type="WeatherReport"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Contains the report data, defines what type of period it covers and additional more detailed reports for smaller time periods if required.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="reportLinks" type="ReportLinkInfo" minOccurs="0" maxOccurs="unbounded"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Links to related WEA reports or other TPEG Messages</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="webContent" type="WebContentLinks" minOccurs="0" maxOccurs="unbounded"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Allows linkage to web based content</xs:documentation></xs:annotation></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="WeatherReport">
+		<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>This component provides the top level weatherItem of the report and allows subsequent lower levels to be defined. A multiple level hierarchy of time periods can be defined.</xs:documentation></xs:annotation><xs:sequence>
+			<xs:element name="reportType" type="wea000_ReportType"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Defines the time "extent" of a report.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="weatherDefinition" type="WeatherItem"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Main Details of Weather Report</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="moreDetailedReport" type="WeatherReport" minOccurs="0" maxOccurs="unbounded"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Optional next level Report</xs:documentation></xs:annotation></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="WeatherItem">
+		<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>This component defines the main content for the weather Report; including descriptive and statistical parts.</xs:documentation></xs:annotation><xs:sequence>
+			<xs:element name="period" type="wea001_Period" minOccurs="0" maxOccurs="unbounded"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>This provides an optional period for the report.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="weatherDescription" type="Element" minOccurs="0" maxOccurs="unbounded"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Weather description provides a qualitative description for the weather report. 
+ Any number of elements may be selected from the element tables.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="start" type="tdt:TimePoint" minOccurs="0"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Start defines the specific time of day the period of this weather report item begins.
+ typically hours and minutes 
+  if Stop is not defined then Start is used  to define a nominal time of the report . For Example - 2pm sunny; 4pm rain; 6pm showers, sunny intervals.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="stop" type="tdt:TimePoint" minOccurs="0"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Stop defines the explicit end time of the period for the weather Item.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="date" type="tdt:TimePoint" minOccurs="0"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>This provides ability to report the main date for a report (suitable for a daily forecast)
+ Typically Date or  Date &amp;amp; Month</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="reportName" type="tdt:LocalisedShortString" minOccurs="0" maxOccurs="unbounded"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Title for the WEA Report 
+ e.g. "Warwickshire Forecast", "UK Weather" Multiplicity allows multiple languages to be carried.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="reportText" type="tdt:LocalisedLongString" minOccurs="0" maxOccurs="unbounded"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Additional text for weather related information.
+ Maybe advice or description of major weather problem or maybe specific information related to weather at specific function/event. (for  example: for the  London Marathon ..... "Due to high temperatures ensure you drink plenty of liquid if you are running today" )
+ Multiplicity allows multiple languages to be carried.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="outlook" type="OutlookTrend" minOccurs="0"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Outlook trend provides a description of how the weather is expected to develop over a following period</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="statistics" type="WeatherStatistics" minOccurs="0"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Weather statistics are provided as required to provide quantitative details for the weather report.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="warning" type="WeatherWarning" minOccurs="0" maxOccurs="unbounded"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Warnings for specific weather</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="weatherAltitudeDescription" type="AltitudeElements" minOccurs="0" maxOccurs="unbounded"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Weather description provides a qualitative description for the weather report. 
+ Any number of elements may be selected from the element tables.</xs:documentation></xs:annotation></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="WeatherStatistics">
+		<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Statistics are provided to give a quantitative description of the weather status or forecast.</xs:documentation></xs:annotation><xs:sequence>
+			<xs:element name="airQuality" type="wea008_AirQuality" minOccurs="0"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>AirQuality</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="cloudCover" type="tdt:IntUnTi" minOccurs="0"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Cloud cover.
+ An okta is a measurement used to describe cloud cover. Sky conditions are estimated in terms of how many eighths of the sky are obscured by cloud, ranging from completely clear, 0 oktas, through to completely overcast, 8 oktas.
+ valid range 0 to 8.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="pressure" type="tdt:IntUnLi" minOccurs="0"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Barometric Pressure is hPascal ( this is nominally equivalent to mBar, which is still preferred unit in practice for weather forecast, although not actually SI units)</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="pressureTendency" type="wea004_PressureTendency" minOccurs="0"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>How pressure will (or has) changed.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="rainfallRate" type="tdt:FixedPointNumber" minOccurs="0"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Rate of rainfall in mm/hour.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="rainfallTotal" type="tdt:FixedPointNumber" minOccurs="0"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Total rainfall for defined period  in mm.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="seaState" type="wea006_SeaState" minOccurs="0"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Description of how big the waves are.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="snowDepth" type="tdt:FixedPointNumber" minOccurs="0"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>depth of fallen snow (mm)</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="sunshine" type="tdt:FixedPointNumber" minOccurs="0"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>hours of sunshine for defined period (either recorded in past or expected in future)</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="temp" type="tdt:FixedPointNumber" minOccurs="0"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>General Temperature degrees Celsius  (to define current or expected temp.)</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="tempMax" type="tdt:FixedPointNumber" minOccurs="0"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Maximum temp (degrees Celsius) expected over defined period (for daily report type this is typically maximum temperature expected during daytime)</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="tempMin" type="tdt:FixedPointNumber" minOccurs="0"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Minimum temp (degrees Celsius) expected over defined period (for daily report type this is typically minimum temperature expected during night time)</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="visibility" type="wea005_Visibility" minOccurs="0"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>subjective visibility description</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="visibilityDistance" type="tdt:FixedPointNumber" minOccurs="0"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>nominal visibility in km</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="feelsLike" type="tdt:FixedPointNumber" minOccurs="0"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Feels Like defines what the temperature will be perceived as to a person , due to wind chill or humidity; Temperature "that it feels like" on exposed skin , due to wind/humidity (Celsius)</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="windDirection" type="wea003_Direction" minOccurs="0"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Wind Direction based on cardinal, ordinal and sub-ordinal directions of the compass.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="windDirectionTrend" type="wea012_WindDirectionTrend" minOccurs="0"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>How the direction of the wind is changing</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="windSpeed" type="tdt:Velocity" minOccurs="0"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>wind speed (m/sec)</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="windSpeedTrend" type="wea013_WindSpeedTrend" minOccurs="0"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Defines how wind speed is changing</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="cloudbase" type="tdt:DistanceMetres" minOccurs="0"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Height of base of lowest clouds above the ground</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="relativeHumidity" type="tdt:FixedPercentage" minOccurs="0"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Relative humidity.
+ Amount of water vapour in the air.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="dewPointTemp" type="tdt:FixedPointNumber" minOccurs="0"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>The temperature to which a given body of air must be cooled for it to condense (Linked to Relative Humidity) In degrees Celsius</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="uvIndex" type="wea010_UVIndex" minOccurs="0"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>WHO measure of Ultraviolet Radiation</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="sunrise" type="tdt:TimePoint" minOccurs="0"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Time of sunrise</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="sunset" type="tdt:TimePoint" minOccurs="0"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Time of sunset</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="pollenCount" type="wea007_PollenCount" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="WeatherWarning">
+		<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Provides highlighted warning about specific types of weather. For example "Warning strong wind"</xs:documentation></xs:annotation><xs:sequence>
+			<xs:element name="warningLevel" type="wea009_WarningLevel"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Warning level.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="warningElements" type="Element" maxOccurs="unbounded"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Item taken from element tables for which a warning is provided.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="isEarlyWarning" type="tdt:Boolean"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>If true the warning is provided more than 24 hours before expected bad weather period. If false warning is related to time within 24 hrs of the report period. This allows "today's" report to include a warning about "tomorrow's" weather allowing people to prepare if needed.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="warningText" type="tdt:LocalisedLongString" minOccurs="0" maxOccurs="unbounded"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Additional information for Warnings</xs:documentation></xs:annotation></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="AltitudeElements">
+		<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Altitude Elements allows an altitude to be asigned to an element or set of elements and or statistics. This allows reporting of altitude specific weather such as snow above a certain altitude or temperature at altitude.</xs:documentation></xs:annotation><xs:sequence>
+			<xs:element name="atAltitude" type="tdt:DistanceMetres" minOccurs="0"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Defines that the reported weather elements are found at this altitude. (Not to be combined with aboveAltitude or belowAltitude attributes)</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="aboveAltitude" type="tdt:DistanceMetres" minOccurs="0"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Defines that the reported weather elements are found above this altitude.
+ (e.g. snow above 3000m)</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="belowAltitude" type="tdt:DistanceMetres" minOccurs="0"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Defines that the reported weather elements are found below this altitude.
+ (e.g. humid below 1000m)</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="altElements" type="Element" minOccurs="0" maxOccurs="unbounded"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Weather elements associated with the defined altitude.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="altStatistics" type="WeatherStatistics" minOccurs="0"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Statistical information associated with the defined altitude.</xs:documentation></xs:annotation></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="OutlookTrend">
+		<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>This component provides an indication of how the weather will change over a given period.
+ eg
+ "becoming wetter [by midweek]"
+ "becoming warmer [by later today]"
+ "becoming cooler  [by Thursday]"
+ "becoming  more humid [by this afternoon]"</xs:documentation></xs:annotation><xs:sequence>
+			<xs:element name="trend" type="wea002_TrendItem" maxOccurs="5"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>How the weather is expected to progress</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="trendTimescale" type="wea001_Period" minOccurs="0"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Over what period the trend is defined</xs:documentation></xs:annotation></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ReportLinkInfo">
+		<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Linked Messages provide a method to reference other WEA messages. This is used to provide a hierarchy of WEA messages based on child or parent locations.
+ For example : A message may have a location representing a region such as "The Midlands", it's Parent may be the "UK"  , and several child messages may reference "Warwickshire", "West Midlands", "Staffordshire" ...etc.</xs:documentation></xs:annotation><xs:sequence>
+			<xs:element name="parentMessage" type="LinkedMessage" minOccurs="0"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Link to Parent Message</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="childMessage" type="LinkedMessage" minOccurs="0" maxOccurs="unbounded"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Link to Child Message</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="relatedMessage" type="LinkedMessage" minOccurs="0" maxOccurs="unbounded"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Link to Message related to this weather report, maybe either another WEA report or a different TPEG APP completely; for example: Reference to TEC message detailing a bridge closure due to high winds or flooding.</xs:documentation></xs:annotation></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="WebContentLinks">
+		<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Allows linkage to web based content , such as weather maps, plots. Rain radar, cloud or temperature maps.
+ Type of data may be defined by ContentType;  
+ Additional title descriptions may be signalled using text.</xs:documentation></xs:annotation><xs:sequence>
+			<xs:element name="url" type="tdt:ShortString"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>URL of on-line data content</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="contentType" type="wea014_ContentType" minOccurs="0"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Type of content, may be used to set icon in HMI for link</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="contentText" type="tdt:LocalisedShortString" minOccurs="0" maxOccurs="unbounded"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Used to add additional info relating to the link if required also if Content Type not appropriate then this can be used to send other short description of data type.</xs:documentation></xs:annotation></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="MMCSwitch">
+		<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>The switch construct for MMC messages</xs:documentation></xs:annotation><xs:sequence>
+			<xs:choice minOccurs="1" maxOccurs="1">
+				<xs:element name="optionMMCMessagePartLink" type="mmc:MMCMessagePart" minOccurs="1" maxOccurs="1"/>
+				<xs:element name="optionMMCMasterMessageLink" type="mmc:MMCMasterMessage" minOccurs="1" maxOccurs="1"/>
+				<xs:element name="optionMessageManagementContainerLink" type="mmc:MessageManagementContainer" minOccurs="1" maxOccurs="1"/>
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="LinkedMessage">
+		<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Link Info for Child and Parent messages is done using the messageID.
+ For linking to other Applications the Related Message includes COID and SID.</xs:documentation></xs:annotation><xs:sequence>
+			<xs:element name="linkedMessageID" type="tdt:IntUnLoMB"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>The related messageID</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="contentID" type="tdt:IntUnTi"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>ContentID of the TPEG service component defined for the linked message.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="originatorSID" type="tdt:ServiceIdentifier" minOccurs="0"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>The TPEG service ID related to the linked message;(this may be originatorSID or carrierSID) This may be excluded if linked message is in same service.</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="applicationID" type="tdt:IntUnLi" minOccurs="0"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Application ID of target message (if in other application) ; default is =5 (TEC) so this may be omitted if the linked message is of this application type.</xs:documentation></xs:annotation></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Element">
+		<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Elements are selected from the Element tables, to provide the qualitative description of the weather report or warning type</xs:documentation></xs:annotation><xs:sequence>
+			<xs:element name="subTableType" type="wea100_ElementType"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Table number</xs:documentation></xs:annotation></xs:element>
+			<xs:element name="subTableValue" type="wea099_ElementSubTable"><xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Entry from table</xs:documentation></xs:annotation></xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="wea000_ReportType">
+		<xs:attribute name="table" type="xs:string" fixed="wea000_ReportType" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="0"/>
+					<xs:maxInclusive value="5"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="wea001_Period">
+		<xs:attribute name="table" type="xs:string" fixed="wea001_Period" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="0"/>
+					<xs:maxInclusive value="50"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="wea002_TrendItem">
+		<xs:attribute name="table" type="xs:string" fixed="wea002_TrendItem" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="0"/>
+					<xs:maxInclusive value="16"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="wea003_Direction">
+		<xs:attribute name="table" type="xs:string" fixed="wea003_Direction" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="0"/>
+					<xs:maxInclusive value="16"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="wea004_PressureTendency">
+		<xs:attribute name="table" type="xs:string" fixed="wea004_PressureTendency" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="0"/>
+					<xs:maxInclusive value="6"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="wea005_Visibility">
+		<xs:attribute name="table" type="xs:string" fixed="wea005_Visibility" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="0"/>
+					<xs:maxInclusive value="4"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="wea006_SeaState">
+		<xs:attribute name="table" type="xs:string" fixed="wea006_SeaState" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="0"/>
+					<xs:maxInclusive value="7"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="wea007_PollenCount">
+		<xs:attribute name="table" type="xs:string" fixed="wea007_PollenCount" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="0"/>
+					<xs:maxInclusive value="3"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="wea008_AirQuality">
+		<xs:attribute name="table" type="xs:string" fixed="wea008_AirQuality" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="0"/>
+					<xs:maxInclusive value="6"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="wea009_WarningLevel">
+		<xs:attribute name="table" type="xs:string" fixed="wea009_WarningLevel" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="0"/>
+					<xs:maxInclusive value="4"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="wea010_UVIndex">
+		<xs:attribute name="table" type="xs:string" fixed="wea010_UVIndex" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="11"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="wea011_GeoSignificance">
+		<xs:attribute name="table" type="xs:string" fixed="wea011_GeoSignificance" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="0"/>
+					<xs:maxInclusive value="9"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="wea012_WindDirectionTrend">
+		<xs:attribute name="table" type="xs:string" fixed="wea012_WindDirectionTrend" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="0"/>
+					<xs:maxInclusive value="2"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="wea013_WindSpeedTrend">
+		<xs:attribute name="table" type="xs:string" fixed="wea013_WindSpeedTrend" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="0"/>
+					<xs:maxInclusive value="4"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="wea014_ContentType">
+		<xs:attribute name="table" type="xs:string" fixed="wea014_ContentType" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="0"/>
+					<xs:maxInclusive value="6"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="wea099_ElementSubTable">
+		<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation>Abstracted Table for Element Sub-types used in Element data structure</xs:documentation></xs:annotation><xs:attribute name="table" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="wea101_RainElements"/>
+					<xs:enumeration value="wea102_SnowElements"/>
+					<xs:enumeration value="wea103_SleetHailElements"/>
+					<xs:enumeration value="wea104_WindElements"/>
+					<xs:enumeration value="wea105_StormElements"/>
+					<xs:enumeration value="wea106_FogElements"/>
+					<xs:enumeration value="wea107_FrostElements"/>
+					<xs:enumeration value="wea108_SunshineCloudElements"/>
+					<xs:enumeration value="wea109_TemperatureElements"/>
+					<xs:enumeration value="wea110_HazardElements"/>
+					<xs:enumeration value="wea200_ElementQualifier"/>
+					<xs:enumeration value="wea201_ElementQualifierProbability"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="code" type="xs:unsignedByte" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="wea100_ElementType">
+		<xs:attribute name="table" type="xs:string" fixed="wea100_ElementType" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="21"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="wea101_RainElements">
+		<xs:attribute name="table" type="xs:string" fixed="wea101_RainElements" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="0"/>
+					<xs:maxInclusive value="12"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="wea102_SnowElements">
+		<xs:attribute name="table" type="xs:string" fixed="wea102_SnowElements" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="0"/>
+					<xs:maxInclusive value="14"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="wea103_SleetHailElements">
+		<xs:attribute name="table" type="xs:string" fixed="wea103_SleetHailElements" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="0"/>
+					<xs:maxInclusive value="10"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="wea104_WindElements">
+		<xs:attribute name="table" type="xs:string" fixed="wea104_WindElements" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="0"/>
+					<xs:maxInclusive value="27"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="wea105_StormElements">
+		<xs:attribute name="table" type="xs:string" fixed="wea105_StormElements" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="0"/>
+					<xs:maxInclusive value="12"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="wea106_FogElements">
+		<xs:attribute name="table" type="xs:string" fixed="wea106_FogElements" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="0"/>
+					<xs:maxInclusive value="13"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="wea107_FrostElements">
+		<xs:attribute name="table" type="xs:string" fixed="wea107_FrostElements" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="0"/>
+					<xs:maxInclusive value="5"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="wea108_SunshineCloudElements">
+		<xs:attribute name="table" type="xs:string" fixed="wea108_SunshineCloudElements" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="0"/>
+					<xs:maxInclusive value="13"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="wea109_TemperatureElements">
+		<xs:attribute name="table" type="xs:string" fixed="wea109_TemperatureElements" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="0"/>
+					<xs:maxInclusive value="12"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="wea110_HazardElements">
+		<xs:attribute name="table" type="xs:string" fixed="wea110_HazardElements" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="0"/>
+					<xs:maxInclusive value="13"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="wea200_ElementQualifier">
+		<xs:attribute name="table" type="xs:string" fixed="wea200_ElementQualifier" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="0"/>
+					<xs:maxInclusive value="25"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="wea201_ElementQualifierProbability">
+		<xs:attribute name="table" type="xs:string" fixed="wea201_ElementQualifierProbability" use="required"/>
+		<xs:attribute name="code" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:unsignedByte">
+					<xs:minInclusive value="0"/>
+					<xs:maxInclusive value="10"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+</xs:schema>
