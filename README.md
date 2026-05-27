@@ -1,4 +1,4 @@
-# Format Specification Suite
+# Format Specification Package
 
 - **uri:** x-format:cz-ndic_tpeg2-tec-v0.1
 - **format:** TPEG2 TEC - CZ NDIC Events
